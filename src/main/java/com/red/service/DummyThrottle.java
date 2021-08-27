@@ -1,4 +1,4 @@
-package service;
+package com.red.service;
 
 public class DummyThrottle implements Throttle{
     @Override

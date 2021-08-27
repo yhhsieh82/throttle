@@ -1,4 +1,4 @@
-package data;
+package com.red.data;
 
 public class Static {
     private static int successCase = 0;

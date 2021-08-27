@@ -1,15 +1,22 @@
-import java.util.Random;
+package com.red;
 
-import service.DummyThrottle;
-import service.Throttle;
-import data.Static;
+import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
+import com.red.service.CounterThrottle;
+import com.red.data.Static;
+import com.red.service.Throttle;
 
 public class Main {
-    public static Boolean stop = false;
+    private static final int EXPERIMENT_TIME = 20 * 1000;
+    private static Boolean stop = false;
+    // open a thread to do the scheduled job. ex: clean the counter for CounterThrottle
+    private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public static void main(String[] args) throws InterruptedException {
         // create throttle
-        Throttle throttle = new DummyThrottle();
+        Throttle throttle = new CounterThrottle(500, 1000, scheduler);
 
         // simulate a 600 rps loading by creating task in 50ms in average per thread
         for (int i = 0; i < 30; i++) {
@@ -54,8 +61,9 @@ public class Main {
         });
         recordingThread.start();
 
-        Thread.sleep(1000 * 10);
+        Thread.sleep(EXPERIMENT_TIME);
         Main.stop = true;
         recordingThread.join();
+        scheduler.shutdown();
     }
 }
